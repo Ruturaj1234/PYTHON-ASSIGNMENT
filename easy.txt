@@ -1,17 +1,16 @@
-
 <form method="post">
 <center>
     ID: <input type="text" name="id"><br><br>
     Name: <input type="text" name="name"><br><br>
-    Email: <input type="email" name="email"><br><br>
     Course: <input type="text" name="course"><br><br>
 
-    <input type="submit" name="add" value="Add ">
-    <input type="submit" name="update" value="Update t">
-    <input type="submit" name="delete" value="Delete ">
-    <input type="submit" name="display" value="Display ">
+    <input type="submit" name="add" value="Add">
+    <input type="submit" name="update" value="Update">
+    <input type="submit" name="delete" value="Delete">
+    <input type="submit" name="display" value="Display">
 </center>
 </form>
+
 <?php
 $conn = new mysqli("localhost", "root", "", "studentdb");
 if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
@@ -19,18 +18,17 @@ if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
 if (isset($_POST['add'])) {
     $id = $_POST['id'];
     $name = $_POST['name'];
-    $email = $_POST['email'];
     $course = $_POST['course'];
-    if ($id && $name && $email && $course) {
+    if ($id && $name && $course) {
         $check = $conn->query("SELECT * FROM students WHERE id = $id");
         if ($check->num_rows == 0) {
-            $conn->query("INSERT INTO students (id, name, email, course) VALUES ($id, '$name', '$email', '$course')");
-            echo "Student add successfully.<br><br>";
+            $conn->query("INSERT INTO students (id, name, course) VALUES ($id, '$name', '$course')");
+            echo " <center>Student added successfully.<br><br> ";
         } else {
-            echo "Student with  id exist.<br><br>";
+            echo "Student with this ID already exists.<br><br>";
         }
     } else {
-        echo " fill the feild all.<br><br>";
+        echo "Fill all the fields.<br><br>";
     }
 }
 
@@ -41,16 +39,15 @@ if (isset($_POST['update'])) {
         if ($result->num_rows > 0) {
             $student = $result->fetch_assoc();
             $name = $_POST['name'] ?: $student['name'];
-            $email = $_POST['email'] ?: $student['email'];
             $course = $_POST['course'] ?: $student['course'];
 
-            $conn->query("UPDATE students SET name='$name', email='$email', course='$course' WHERE id=$id");
-            echo "Student updated .<br><br>";
+            $conn->query("UPDATE students SET name='$name', course='$course' WHERE id=$id");
+            echo "Student updated.<br><br>";
         } else {
-            echo "student with id not found <br><br>";
+            echo "Student with this ID not found.<br><br>";
         }
     } else {
-        echo "ID is required .<br><br>";
+        echo "ID is required.<br><br>";
     }
 }
 
@@ -60,34 +57,28 @@ if (isset($_POST['delete'])) {
         $conn->query("DELETE FROM students WHERE id=$id");
         echo "Student deleted successfully.<br><br>";
     } else {
-        echo "ID is required .<br><br>";
+        echo "ID is required.<br><br>";
     }
 }
-?>
 
-
-
-<?php
 if (isset($_POST['display'])) {
     $result = $conn->query("SELECT * FROM students");
     if ($result->num_rows > 0) {
-        echo "
-<center> <h3>All Students</h3>";
+        echo "<center><h3>All Students</h3>";
         echo "<table border='1' cellpadding='5'>
                 <tr>
-                    <th>ID</th><th>Name</th><th>Email</th><th>Course</th>
+                    <th>ID</th><th>Name</th><th>Course</th>
                 </tr>";
         while ($row = $result->fetch_assoc()) {
             echo "<tr>
                     <td>{$row['id']}</td>
                     <td>{$row['name']}</td>
-                    <td>{$row['email']}</td>
                     <td>{$row['course']}</td>
                 </tr>";
         }
         echo "</table>";
     } else {
-        echo "No students found ";
+        echo "No students found.";
     }
 }
 ?>
